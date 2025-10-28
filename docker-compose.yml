@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  animonarr-api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: animonarr-api
+    environment:
+      - ANIMONARR_DB=/app/data/animonarr.db
+      - ANIMONARR_DOWNLOAD_DIR=/app/downloads
+      - ANIMONARR_SDL_PATH=sdl
+      - ANIMONARR_ALLOWED_DOMAINS=archive.org,example.com,localhost,127.0.0.1
+      - ANIMONARR_SCRAPE_INTERVAL_MIN=15
+      - TZ=Europe/Berlin
+    volumes:
+      - ./data:/app/data
+      - ./downloads:/app/downloads
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # Frontend is left as a dev-time service; you can run `npm i && npm run dev` locally.
+  # Optionally add an nginx container to serve the built UI.
