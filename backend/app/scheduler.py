@@ -49,3 +49,6 @@ class AniMonarrScheduler:
                     db.commit()
         except Exception as e:
             log.exception("Scraper run failed: %s", e)
+# am Ende der Datei ergänzen
+    async def scrape_once_now(self):
+        await self.run_scrapers()

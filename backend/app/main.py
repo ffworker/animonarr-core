@@ -9,6 +9,7 @@ from .schemas import SeriesOut, EpisodeOut, SeriesCreate, EpisodeCreate
 from .sdl_wrapper import SDLManager
 from .scheduler import AniMonarrScheduler
 from datetime import datetime
+from fastapi import FastAPI, Depends, HTTPException
 
 logging.basicConfig(level=logging.INFO)
 
@@ -118,3 +119,14 @@ def download_episode(episode_id: int, db: Session = Depends(get_db)):
 @app.get("/api/health")
 def health():
     return {"ok": True, "time": datetime.utcnow().isoformat()}
+
+@app.post("/api/admin/scrape-now")
+async def scrape_now():
+    # einmaligen Scrape starten (await, damit es sofort passiert)
+    await scheduler.scrape_once_now()
+    return {"ok": True, "message": "Scrape executed"}
+
+@app.get("/api/admin/scheduler/status")
+def scheduler_status():
+    # sehr einfache Info – bei Bedarf erweitern
+    return {"interval_min": int(os.getenv("ANIMONARR_SCRAPE_INTERVAL_MIN", "15"))}
